@@ -5,37 +5,70 @@
   <title>崩鐵梗圖器</title>
   <style>
     body {
-      font-family: sans-serif;
-      text-align: center;
-      padding: 20px;
+      margin: 0;
+      overflow: hidden;
+      background-color: #f2f2f2;
+      position: relative;
     }
     #imageContainer img {
-      max-width: 200px;
-      margin: 10px;
+      position: absolute;
+      transition: transform 0.3s ease;
+      pointer-events: none;
     }
-    #clearButton {
+    #topBar {
       position: fixed;
-      bottom: 20px;
-      right: 20px;
-      padding: 10px 20px;
-      background-color: red;
-      color: white;
+      top: 10px;
+      left: 10px;
+      z-index: 100;
+    }
+    button {
+      padding: 10px 15px;
+      margin: 5px;
       border: none;
       border-radius: 8px;
       cursor: pointer;
+      font-size: 16px;
+    }
+    #addButton {
+      background-color: #007bff;
+      color: white;
+    }
+    #clearButton {
+      background-color: red;
+      color: white;
     }
   </style>
 </head>
 <body>
-  <h1>歡迎來到崩鐵梗圖器</h1>
-  <button onclick="addImage()">點我產生一張梗圖</button>
+  <div id="topBar">
+    <button id="addButton" onclick="addImage()">點我產生一張梗圖</button>
+    <button id="clearButton" onclick="clearImages()">清除所有圖片</button>
+  </div>
   <div id="imageContainer"></div>
-  <button id="clearButton" onclick="clearImages()">清除所有圖片</button>
 
   <script>
+    function getRandom(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
     function addImage() {
       const img = document.createElement("img");
-      img.src = "https://truth.bahamut.com.tw/s01/202305/365a819095a9fb6e2e954c429c61007c.GIF"; // 請替換成實際圖片網址
+      img.src = "https://truth.bahamut.com.tw/s01/202305/365a819095a9fb6e2e954c429c61007c.GIF"; // 替換成實際圖片網址
+
+      // 隨機大小
+      const size = getRandom(80, 200);
+      img.style.width = `${size}px`;
+      img.style.height = "auto";
+
+      // 隨機位置（考慮圖片尺寸和螢幕大小）
+      const maxW = window.innerWidth - size;
+      const maxH = window.innerHeight - size;
+      const x = getRandom(0, maxW);
+      const y = getRandom(50, maxH); // 避免遮住上方按鈕
+
+      img.style.left = `${x}px`;
+      img.style.top = `${y}px`;
+
       document.getElementById("imageContainer").appendChild(img);
     }
 
