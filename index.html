@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>崩鐵梗圖器</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    #imageContainer img {
+      max-width: 200px;
+      margin: 10px;
+    }
+    #clearButton {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 10px 20px;
+      background-color: red;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>歡迎來到崩鐵梗圖器</h1>
+  <button onclick="addImage()">點我產生一張梗圖</button>
+  <div id="imageContainer"></div>
+  <button id="clearButton" onclick="clearImages()">清除所有圖片</button>
+
+  <script>
+    function addImage() {
+      const img = document.createElement("img");
+      img.src = "https://truth.bahamut.com.tw/s01/202305/365a819095a9fb6e2e954c429c61007c.GIF"; // 請替換成實際圖片網址
+      document.getElementById("imageContainer").appendChild(img);
+    }
+
+    function clearImages() {
+      document.getElementById("imageContainer").innerHTML = "";
+    }
+  </script>
+</body>
+</html>
