@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
-  <title>崩鐵梗圖器</title>
+  <title>崩鐵梗圖器 - 增強版</title>
   <style>
     body {
       margin: 0;
@@ -10,16 +10,11 @@
       background-color: #f2f2f2;
       position: relative;
     }
-    #imageContainer img {
-      position: absolute;
-      transition: transform 0.3s ease;
-      pointer-events: none;
-    }
     #topBar {
       position: fixed;
       top: 10px;
       left: 10px;
-      z-index: 100;
+      z-index: 1000;
     }
     button {
       padding: 10px 15px;
@@ -37,44 +32,77 @@
       background-color: red;
       color: white;
     }
+    img.meme {
+      position: absolute;
+      pointer-events: none;
+      user-select: none;
+    }
   </style>
 </head>
 <body>
   <div id="topBar">
-    <button id="addButton" onclick="addImage()">點我產生一張梗圖</button>
+    <button id="addButton" onclick="addImages()">點我產生梗圖</button>
     <button id="clearButton" onclick="clearImages()">清除所有圖片</button>
   </div>
-  <div id="imageContainer"></div>
-
   <script>
+    let clickCount = 0;
+    const maxPerClick = 64;
+    const imageURL = "https://truth.bahamut.com.tw/s01/202305/365a819095a9fb6e2e954c429c61007c.GIF"; // ← 請替換為圖片網址
+    const images = [];
+
     function getRandom(min, max) {
       return Math.random() * (max - min) + min;
     }
 
-    function addImage() {
-      const img = document.createElement("img");
-      img.src = "https://truth.bahamut.com.tw/s01/202305/365a819095a9fb6e2e954c429c61007c.GIF"; // 替換成實際圖片網址
+    function addImages() {
+      const amount = Math.min(Math.pow(2, clickCount), maxPerClick);
+      clickCount++;
+      for (let i = 0; i < amount; i++) {
+        const img = document.createElement("img");
+        img.src = imageURL;
+        img.className = "meme";
 
-      // 隨機大小
-      const size = getRandom(80, 200);
-      img.style.width = `${size}px`;
-      img.style.height = "auto";
+        const size = getRandom(60, 120);
+        img.style.width = `${size}px`;
+        img.style.left = `${getRandom(0, window.innerWidth - size)}px`;
+        img.style.top = `${getRandom(50, window.innerHeight - size)}px`;
 
-      // 隨機位置（考慮圖片尺寸和螢幕大小）
-      const maxW = window.innerWidth - size;
-      const maxH = window.innerHeight - size;
-      const x = getRandom(0, maxW);
-      const y = getRandom(50, maxH); // 避免遮住上方按鈕
+        // 初始移動方向與速度
+        const dx = getRandom(-2, 2);
+        const dy = getRandom(-2, 2);
 
-      img.style.left = `${x}px`;
-      img.style.top = `${y}px`;
-
-      document.getElementById("imageContainer").appendChild(img);
+        document.body.appendChild(img);
+        images.push({ element: img, dx, dy, size });
+      }
     }
 
     function clearImages() {
-      document.getElementById("imageContainer").innerHTML = "";
+      images.forEach(obj => obj.element.remove());
+      images.length = 0;
+      clickCount = 0;
     }
+
+    function moveImages() {
+      for (const obj of images) {
+        let img = obj.element;
+        let x = parseFloat(img.style.left);
+        let y = parseFloat(img.style.top);
+
+        x += obj.dx;
+        y += obj.dy;
+
+        // 邊界反彈邏輯
+        if (x <= 0 || x + obj.size >= window.innerWidth) obj.dx *= -1;
+        if (y <= 0 || y + obj.size >= window.innerHeight) obj.dy *= -1;
+
+        img.style.left = `${x}px`;
+        img.style.top = `${y}px`;
+      }
+      requestAnimationFrame(moveImages);
+    }
+
+    // 啟動動畫迴圈
+    requestAnimationFrame(moveImages);
   </script>
 </body>
 </html>
